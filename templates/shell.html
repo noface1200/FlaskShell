@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlaskShell</title>
+  <style>
+    body {
+      background-color: black;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      padding: 2rem;
+      color: white;
+      font: 1.3rem Inconsolata, monospace;
+      text-shadow: 0 0 5px #C8C8C8;
+      position: relative;
+    }
+
+    #output {
+      overflow-y: auto;
+      height: 80%;
+      border: 1px solid #C8C8C8;
+      padding: 1rem;
+      background-color: black;
+    }
+
+    #input-container {
+      margin-top: 1rem;
+      display: flex;
+    }
+
+    #command {
+      flex: 1;
+      padding: 0.5rem;
+      background-color: black;
+      border: 1px solid #C8C8C8;
+      color: white;
+      font: 1.3rem Inconsolata, monospace;
+      text-shadow: 0 0 5px #C8C8C8;
+    }
+
+    #command:focus {
+      outline: none;
+      border-color: #0080FF;
+    }
+
+    button {
+      margin-left: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: #0080FF;
+      border: none;
+      color: white;
+      font: 1rem Inconsolata, monospace;
+      cursor: pointer;
+      text-shadow: none;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>FlaskShell Reverse Shell</h1>
+  <div id="output">
+    Reverse Shell<br>
+    Type your commands below.<br>
+    ----------------------------------<br>
+  </div>
+  <div id="input-container">
+    <input type="text" id="command" placeholder="Type a command and press Enter...">
+    <button onclick="sendCommand()">Run Command</button>
+  </div>
+
+  <script>
+    const outputElement = document.getElementById("output");
+
+    function appendToOutput(text) {
+      outputElement.innerHTML += `${text}<br>`;
+      outputElement.scrollTop = outputElement.scrollHeight;
+    }
+
+    async function sendCommand() {
+      const commandInput = document.getElementById("command");
+      const command = commandInput.value.trim();
+
+      if (command) {
+        appendToOutput(`> ${command}`);
+        commandInput.value = "";
+
+        try {
+          const response = await fetch('/execute', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ command: command })
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+            appendToOutput(data.result.replace(/\n/g, '<br>'));
+          } else {
+            appendToOutput(`Error: ${data.error.replace(/\n/g, '<br>')}`);
+          }
+        } catch (err) {
+          appendToOutput("Error: Unable to reach the server.");
+        }
+        appendToOutput("----------------------------------");
+      }
+    }
+    document.getElementById("command").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        sendCommand();
+      }
+    });
+  </script>
+</body>
+</html>
