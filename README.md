@@ -3,8 +3,6 @@
 > [!IMPORTANT]
 > this can only be used if you are on the same wifi connection, as the target machine although I am working on a workaround
 
-
-
 This is a simple proof of concept for a reverse shell built with Python and the Flask framework. It allows a client to input commands on a webpage and execute them remotely on the target computer as long as they are in the same (Wi-Fi/LAN) network as you. This tool is for educational purposes only and should be used in a controlled environment for security research or ethical hacking practices.
 
 ## Features
